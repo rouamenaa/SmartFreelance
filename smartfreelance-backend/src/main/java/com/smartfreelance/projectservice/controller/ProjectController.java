@@ -2,7 +2,6 @@ package com.smartfreelance.projectservice.controller;
 
 import com.smartfreelance.projectservice.entity.Project;
 import com.smartfreelance.projectservice.service.ProjectService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,10 +13,25 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    // constructeur manuel (injection Spring)
     public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }
+
+
+        @GetMapping("/hello")
+        public String hello() {
+            return "Hello Gateway works!";
+        }
+
+
+
+
+
+
+
+
+
+
     // ================= CREATE =================
 
     @PostMapping
@@ -74,20 +88,40 @@ public class ProjectController {
         return projectService.getProjectById(id);
     }
 
+    // ================= UPDATE =================
+
+    @PutMapping("/{id}")
+    public Project updateProject(@PathVariable Long id,
+                                 @RequestBody Project updatedProject) {
+        return projectService.updateProject(id, updatedProject);
+    }
+
     // ================= DELETE =================
 
     @DeleteMapping("/{id}")
     public void deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
     }
-    @PutMapping("/{id}")
-    public Project updateProject(@PathVariable Long id, @RequestBody Project updatedProject) {
-        return projectService.updateProject(id, updatedProject);
-    }
+
     // ================= PROJECT PROGRESS =================
 
     @GetMapping("/{id}/progress")
     public double getProjectProgress(@PathVariable Long id) {
         return projectService.calculateProjectProgress(id);
     }
+
+    // 🚀 ================= PERFORMANCE INDEX =================
+
+    @GetMapping("/{id}/performance")
+    public double getProjectPerformance(@PathVariable Long id) {
+        return projectService.calculateProjectPerformanceIndex(id);
+    }
+
+    // 🚀 ================= PERFORMANCE LEVEL =================
+
+    @GetMapping("/{id}/performance-level")
+    public String getProjectPerformanceLevel(@PathVariable Long id) {
+        return projectService.classifyProjectPerformance(id);
+    }
+    
 }

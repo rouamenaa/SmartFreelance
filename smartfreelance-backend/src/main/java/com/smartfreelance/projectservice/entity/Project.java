@@ -1,9 +1,9 @@
 package com.smartfreelance.projectservice.entity;
 
-
 import com.smartfreelance.projectservice.enums.ProjectStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,16 +23,6 @@ public class Project {
 
     @Column(length = 2000)
     private String description;
-
-    private Double budget;
-
-    private LocalDate deadline;
-
-    @Enumerated(EnumType.STRING)
-    private ProjectStatus status;
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProjectPhase> phases;
 
     public Long getId() {
         return id;
@@ -66,6 +56,14 @@ public class Project {
         this.budget = budget;
     }
 
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
     public LocalDate getDeadline() {
         return deadline;
     }
@@ -89,5 +87,18 @@ public class Project {
     public void setPhases(List<ProjectPhase> phases) {
         this.phases = phases;
     }
-}
 
+    private Double budget;
+
+    private LocalDate startDate;
+
+    private LocalDate deadline;
+
+    @Enumerated(EnumType.STRING)
+    private ProjectStatus status;
+
+    @OneToMany(mappedBy = "project",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<ProjectPhase> phases;
+}

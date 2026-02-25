@@ -28,5 +28,11 @@ public interface ProjectService {
 
     void autoCompleteProjectIfNeeded(Long projectId);
 
+    // 🔥 EXISTING
     double calculateProjectProgress(Long projectId);
+
+    // 🚀 NEW — Performance Engine
+    double calculateProjectPerformanceIndex(Long projectId);
+
+    String classifyProjectPerformance(Long projectId);
 }

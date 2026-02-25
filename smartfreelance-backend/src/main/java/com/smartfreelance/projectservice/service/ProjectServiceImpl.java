@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -112,6 +114,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.setDescription(updatedProject.getDescription());
         project.setBudget(updatedProject.getBudget());
         project.setDeadline(updatedProject.getDeadline());
+        project.setStartDate(updatedProject.getStartDate()); // 🚀 NEW
 
         return projectRepository.save(project);
     }
@@ -162,6 +165,80 @@ public class ProjectServiceImpl implements ProjectService {
 
         return (completedTasks * 100.0) / totalTasks;
     }
+
+    // 🚀 ================= PERFORMANCE ENGINE =================
+
+    private double calculateTimeProgress(Project project) {
+
+        if (project.getStartDate() == null || project.getDeadline() == null) {
+            return 0;
+        }
+
+        LocalDate today = LocalDate.now();
+
+        if (today.isBefore(project.getStartDate())) {
+            return 0;
+        }
+
+        long totalDuration =
+                ChronoUnit.DAYS.between(project.getStartDate(), project.getDeadline());
+
+        long elapsed =
+                ChronoUnit.DAYS.between(project.getStartDate(), today);
+
+        if (totalDuration <= 0) return 100;
+
+        double timeProgress = (elapsed * 100.0) / totalDuration;
+
+        return Math.min(timeProgress, 100);
+    }
+
+    private double calculateTimeAlignmentScore(double workProgress, double timeProgress) {
+
+        double gap = workProgress - timeProgress;
+
+        if (gap >= 0) return 100;
+
+        return Math.max(0, 100 + gap);
+    }
+
+    private double calculateStructureScore(Project project) {
+
+        if (project.getPhases().isEmpty()) return 0;
+
+        long validPhases = project.getPhases().stream()
+                .filter(p -> p.getTasks().size() >= 2)
+                .count();
+
+        return (validPhases * 100.0) / project.getPhases().size();
+    }
+
+    @Override
+    public double calculateProjectPerformanceIndex(Long projectId) {
+
+        Project project = getProjectOrThrow(projectId);
+
+        double workProgress = calculateProjectProgress(projectId);
+        double timeProgress = calculateTimeProgress(project);
+        double alignmentScore = calculateTimeAlignmentScore(workProgress, timeProgress);
+        double structureScore = calculateStructureScore(project);
+
+        return (workProgress * 0.5)
+                + (alignmentScore * 0.3)
+                + (structureScore * 0.2);
+    }
+
+    @Override
+    public String classifyProjectPerformance(Long projectId) {
+
+        double index = calculateProjectPerformanceIndex(projectId);
+
+        if (index >= 80) return "HIGH_PERFORMANCE";
+        if (index >= 50) return "MODERATE";
+        return "CRITICAL";
+    }
+
+    // ==========================================================
 
     private Project getProjectOrThrow(Long id) {
         return projectRepository.findById(id)
