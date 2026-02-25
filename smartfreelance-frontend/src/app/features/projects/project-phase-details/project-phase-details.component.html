@@ -1,0 +1,45 @@
+<div *ngIf="phase" class="phase-card">
+
+  <h2 class="phase-title">{{ phase.name }}</h2>
+
+  <div class="phase-info">
+
+    <div class="info-item">
+      <!-- icône calendrier ➡️ emoji ou SVG -->
+      <span class="info-icon">📅</span>
+      <span class="info-label">Start:</span>
+      <span class="info-value">{{ phase.startDate | date:'shortDate' }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="info-icon">✅</span>
+      <span class="info-label">End:</span>
+      <span class="info-value">{{ phase.endDate | date:'shortDate' }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="info-icon">ℹ️</span>
+      <span class="info-label">Status:</span>
+      <span class="info-value" [ngClass]="phase.status.toLowerCase()">{{ phase.status }}</span>
+    </div>
+
+  </div>
+
+  <hr>
+
+  <!-- Toggle tâches -->
+  <div class="tasks-toggle">
+    <button class="btn-stroked" (click)="showTaskForm = !showTaskForm">
+      <span class="toggle-icon">
+        {{ showTaskForm ? '🔼' : '🔽' }}
+      </span>
+      {{ showTaskForm ? 'Hide Tasks' : 'Show Tasks' }}
+    </button>
+  </div>
+
+  <!-- Liste des tâches -->
+  <div *ngIf="showTaskForm && phase.id" class="task-list">
+    <app-task [phaseId]="phase.id"></app-task>
+  </div>
+
+</div>

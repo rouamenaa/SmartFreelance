@@ -1,0 +1,52 @@
+<div class="form-container">
+  <h2>Create Project</h2>
+
+  <form [formGroup]="projectForm" (ngSubmit)="submit()">
+
+    <!-- TITLE -->
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input id="title" type="text" formControlName="title" placeholder="Enter project title">
+      <span class="error" *ngIf="projectForm.get('title')?.invalid && (projectForm.get('title')?.touched || projectForm.get('title')?.dirty)">
+        <span *ngIf="projectForm.get('title')?.hasError('required')">Title is required</span>
+        <span *ngIf="projectForm.get('title')?.hasError('minlength')">Title must be at least 3 characters</span>
+      </span>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" rows="4" formControlName="description" placeholder="Enter project description"></textarea>
+      <span class="error" *ngIf="projectForm.get('description')?.invalid && (projectForm.get('description')?.touched || projectForm.get('description')?.dirty)">
+        Description cannot exceed 500 characters
+      </span>
+    </div>
+
+    <!-- BUDGET -->
+    <div class="form-group">
+      <label for="budget">Budget</label>
+      <input id="budget" type="number" formControlName="budget" placeholder="Enter budget">
+      <span class="error" *ngIf="projectForm.get('budget')?.invalid && (projectForm.get('budget')?.touched || projectForm.get('budget')?.dirty)">
+        <span *ngIf="projectForm.get('budget')?.hasError('required')">Budget is required</span>
+        <span *ngIf="projectForm.get('budget')?.hasError('min')">Budget must be positive</span>
+      </span>
+    </div>
+
+    <!-- DEADLINE -->
+    <div class="form-group">
+      <label for="deadline">Deadline</label>
+      <input id="deadline" type="date" formControlName="deadline">
+      <span class="error" *ngIf="projectForm.get('deadline')?.invalid && (projectForm.get('deadline')?.touched || projectForm.get('deadline')?.dirty)">
+        <span *ngIf="projectForm.get('deadline')?.hasError('required')">Deadline is required</span>
+        <span *ngIf="projectForm.get('deadline')?.hasError('futureDate')">Deadline must be a future date</span>
+      </span>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <button type="submit" [disabled]="loading">{{ loading ? 'Creating...' : 'Create Project' }}</button>
+      <button type="button" routerLink="/">Cancel</button>
+    </div>
+
+  </form>
+</div>

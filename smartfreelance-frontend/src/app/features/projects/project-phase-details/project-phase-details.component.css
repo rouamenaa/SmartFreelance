@@ -1,0 +1,148 @@
+/* ===================== */
+/* Phase Card Container  */
+/* ===================== */
+.phase-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Title */
+.phase-title {
+  margin: 0 0 12px 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* ===================== */
+/* Phase Info Section    */
+/* ===================== */
+.phase-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-icon {
+  font-size: 1.2rem; /* taille des emojis */
+}
+
+.info-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.info-value {
+  color: #333;
+}
+
+/* Status badges */
+.info-value.pending { color: orange; font-weight: bold; }
+.info-value.in_progress { color: #007bff; font-weight: bold; }
+.info-value.completed { color: green; font-weight: bold; }
+.info-value.blocked { color: red; font-weight: bold; }
+.info-value.ready_for_review { color: #6f42c1; font-weight: bold; }
+
+/* ===================== */
+/* Divider               */
+/* ===================== */
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 12px 0;
+}
+
+/* ===================== */
+/* Tasks Toggle Button   */
+/* ===================== */
+.tasks-toggle {
+  margin-bottom: 12px;
+}
+
+.tasks-toggle .btn-stroked {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #007bff;
+  background-color: #fff;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.tasks-toggle .btn-stroked:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.toggle-icon {
+  font-size: 1rem;
+}
+
+/* ===================== */
+/* Task List             */
+/* ===================== */
+.task-list {
+  padding-left: 16px;
+  border-left: 2px solid #eee;
+}
+
+/* ===================== */
+/* Buttons inside Task/Phase table */
+/* ===================== */
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0 2px;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.btn-icon:hover {
+  transform: scale(1.2);
+}
+
+/* ===================== */
+/* Table badges          */
+/* ===================== */
+.badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.badge.pending { background-color: #fff3cd; color: #856404; }
+.badge.in_progress { background-color: #cce5ff; color: #004085; }
+.badge.completed { background-color: #d4edda; color: #155724; }
+.badge.blocked { background-color: #f8d7da; color: #721c24; }
+.badge.ready_for_review { background-color: #e2d6f0; color: #4b0082; }
+
+/* ===================== */
+/* Empty State           */
+/* ===================== */
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+  font-size: 1.1rem;
+}
+.empty-state i {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}

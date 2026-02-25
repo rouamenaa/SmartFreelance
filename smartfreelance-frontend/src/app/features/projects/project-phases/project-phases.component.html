@@ -1,0 +1,164 @@
+<div class="phases-container">
+  <h3>Project Phases</h3>
+
+  <!-- Bouton Add Phase -->
+  <div class="add-btn-wrapper">
+    <button type="button" class="btn btn-primary" (click)="toggleAddPhaseForm()">
+      <span *ngIf="!showAddPhaseForm">➕</span>
+      <span *ngIf="showAddPhaseForm">❌</span>
+      {{ showAddPhaseForm ? ' Cancel' : ' Add Phase' }}
+    </button>
+  </div>
+
+  <!-- Formulaire Add Phase -->
+  <div class="add-phase-form" *ngIf="showAddPhaseForm">
+    <form [formGroup]="addPhaseForm" (ngSubmit)="addPhase()">
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input id="name" type="text" formControlName="name" class="form-control" />
+          <div class="error" *ngIf="addNameControl.invalid && addNameControl.touched">
+            Name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="startDate">Start Date</label>
+          <input id="startDate" type="date" formControlName="startDate" class="form-control" />
+          <div class="error" *ngIf="addStartDateControl.invalid && addStartDateControl.touched">
+            Start date required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="endDate">End Date</label>
+          <input id="endDate" type="date" formControlName="endDate" class="form-control" />
+          <div class="error" *ngIf="addEndDateControl.invalid && addEndDateControl.touched">
+            End date required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" formControlName="status" class="form-control">
+            <option *ngFor="let status of statusOptions" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success" [disabled]="addPhaseForm.invalid">
+          ✅ Add Phase
+        </button>
+      </div>
+
+    </form>
+  </div>
+  <div class="filters">
+
+    <input type="text" placeholder="Search phase..." [(ngModel)]="searchTerm" (input)="applyFilters()">
+
+    <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+      <option value="">All Status</option>
+      <option *ngFor="let status of statusOptions" [value]="status">
+        {{ status }}
+      </option>
+    </select>
+
+  </div>
+  <!-- Tableau des phases -->
+  <table class="phases-table" *ngIf="phases.length > 0">
+
+    <thead>
+      <tr>
+        <th (click)="sortBy('name')">Name ⬍</th>
+        <th (click)="sortBy('startDate')">Start Date ⬍</th>
+        <th (click)="sortBy('endDate')">End Date ⬍</th>
+        <th (click)="sortBy('status')">Status ⬍</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let phase of filteredPhases">
+        <!-- NAME -->
+        <td>
+          <ng-container *ngIf="editingPhaseId !== phase.id; else editName">
+            {{ phase.name }}
+          </ng-container>
+          <ng-template #editName>
+            <input type="text" [formControl]="nameControl" class="form-control">
+          </ng-template>
+        </td>
+
+        <!-- START DATE -->
+        <td>
+          <ng-container *ngIf="editingPhaseId !== phase.id; else editStart">
+            {{ phase.startDate | date:'shortDate' }}
+          </ng-container>
+          <ng-template #editStart>
+            <input type="date" [formControl]="startDateControl" class="form-control">
+          </ng-template>
+        </td>
+
+        <!-- END DATE -->
+        <td>
+          <ng-container *ngIf="editingPhaseId !== phase.id; else editEnd">
+            {{ phase.endDate | date:'shortDate' }}
+          </ng-container>
+          <ng-template #editEnd>
+            <input type="date" [formControl]="endDateControl" class="form-control">
+          </ng-template>
+        </td>
+
+        <!-- STATUS -->
+        <td>
+          <ng-container *ngIf="editingPhaseId !== phase.id; else editStatus">
+            <span class="badge" [ngClass]="phase.status.toLowerCase()">
+              {{ phase.status }}
+            </span>
+          </ng-container>
+          <ng-template #editStatus>
+            <select [formControl]="statusControl" class="form-control">
+              <option *ngFor="let status of statusOptions" [value]="status">
+                {{ status }}
+              </option>
+            </select>
+          </ng-template>
+        </td>
+
+        <!-- ACTIONS -->
+        <td class="actions-cell">
+
+          <!-- MODE NORMAL -->
+          <ng-container *ngIf="editingPhaseId !== phase.id">
+            <button class="btn-icon btn-details" (click)="viewDetails(phase)" title="View Details">👁️</button>
+            <button class="btn-icon btn-edit" (click)="startEdit(phase)" title="Edit">✏️</button>
+            <button class="btn-icon btn-delete" (click)="deletePhase(phase.id)" title="Delete">🗑️</button>
+          </ng-container>
+
+          <!-- MODE EDIT -->
+          <ng-container *ngIf="editingPhaseId === phase.id">
+            <button class="btn-icon btn-save" (click)="saveEdit(phase)" title="Save">✅</button>
+            <button class="btn-icon btn-cancel" (click)="cancelEdit()" title="Cancel">❌</button>
+          </ng-container>
+
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" *ngIf="phases.length === 0 && !showAddPhaseForm">
+    📂
+    <p>No phases found for this project.</p>
+  </div>
+
+</div>
