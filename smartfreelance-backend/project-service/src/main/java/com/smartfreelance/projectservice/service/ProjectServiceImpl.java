@@ -131,7 +131,6 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.delete(project);
     }
 
-    // 🔥 AUTO COMPLETION LOGIC
     @Override
     public void autoCompleteProjectIfNeeded(Long projectId) {
 
@@ -146,7 +145,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
-    // 🔥 PROGRESS CALCULATION
     @Override
     public double calculateProjectProgress(Long projectId) {
 
@@ -166,7 +164,6 @@ public class ProjectServiceImpl implements ProjectService {
         return (completedTasks * 100.0) / totalTasks;
     }
 
-    // 🚀 ================= PERFORMANCE ENGINE =================
 
     private double calculateTimeProgress(Project project) {
 
@@ -238,7 +235,6 @@ public class ProjectServiceImpl implements ProjectService {
         return "CRITICAL";
     }
 
-    // ==========================================================
 
     private Project getProjectOrThrow(Long id) {
         return projectRepository.findById(id)
