@@ -14,21 +14,19 @@ import { SidebarComponent } from './core/sidebar/sidebar.component';
 
 
 @NgModule({
-  declarations: [
+  declarations: [],
+  imports: [
+    HttpClientModule,
+    BrowserModule,
+    AppRoutingModule,
     AppComponent,
     LayoutComponent,
     NavbarComponent,
     ConfirmDialogComponent,
     SidebarComponent,
-  ],
-  imports: [
-    HttpClientModule,
-    BrowserModule,
-    AppRoutingModule,
     ProjectsModule,
-    FormsModule,           
-    ReactiveFormsModule 
-    
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [
     provideClientHydration(),
