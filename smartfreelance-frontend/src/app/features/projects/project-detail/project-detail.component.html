@@ -1,0 +1,156 @@
+<div class="project-detail-container" *ngIf="!loading">
+
+  <!-- BACK BUTTON -->
+  <button class="back-btn" (click)="goBack()">← Back</button>
+
+  <!-- HEADER -->
+  <h2 class="project-header">Project Details</h2>
+
+  <!-- ERROR -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- MAIN CARD -->
+  <div *ngIf="project" class="project-card">
+
+    <!-- 1️⃣ Project Info -->
+    <section class="section-card">
+      <h3>Project Information</h3>
+      <div class="info-grid">
+        <div class="detail-row">
+          <mat-icon class="detail-icon">title</mat-icon>
+          <div>
+            <span class="detail-label">Title</span>
+            <span class="detail-value">{{ project.title }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <mat-icon class="detail-icon">description</mat-icon>
+          <div>
+            <span class="detail-label">Description</span>
+            <span class="detail-value">{{ project.description || '-' }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <mat-icon class="detail-icon">attach_money</mat-icon>
+          <div>
+            <span class="detail-label">Budget</span>
+            <span class="detail-value">${{ project.budget | number:'1.2-2' }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <mat-icon class="detail-icon">info</mat-icon>
+          <div>
+            <span class="detail-label">Status</span>
+            <span class="detail-value status">{{ project.status }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <mat-icon class="detail-icon">event</mat-icon>
+          <div>
+            <span class="detail-label">Deadline</span>
+            <span class="detail-value">{{ project.deadline | date:'mediumDate' }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<!-- 2️⃣ AI Suggestions -->
+<section class="ai-suggestions" *ngIf="aiSummary">
+  <h3>🤖 AI Analysis</h3>
+
+  <!-- 🔹 Résumé naturel généré par IA -->
+  <div class="ai-summary-card">
+    <mat-icon class="suggestion-icon">auto_awesome</mat-icon>
+    <p class="ai-summary-text">{{ aiSummary }}</p>
+  </div>
+
+  <!-- 🔹 Cartes détaillées (optionnel, si tu veux garder la structure) -->
+  <div class="suggestion-grid">
+    <div class="suggestion-card" *ngIf="project?.category && project.category !== 'Unknown'">
+      <mat-icon class="suggestion-icon">category</mat-icon>
+      <div class="suggestion-content">
+        <span class="suggestion-label">Category</span>
+        <span class="suggestion-value">{{ project.category }}</span>
+      </div>
+      <span class="ai-badge">AI Suggestion</span>
+    </div>
+
+    <div class="suggestion-card" *ngIf="project?.stack?.length">
+      <mat-icon class="suggestion-icon">code</mat-icon>
+      <div class="suggestion-content">
+        <span class="suggestion-label">Stack</span>
+        <span class="suggestion-value">{{ project.stack?.join(', ') || '-' }}</span>
+      </div>
+      <span class="ai-badge">AI Suggestion</span>
+    </div>
+
+    <div class="suggestion-card" *ngIf="project?.complexity && project.complexity !== 'Unknown'">
+      <mat-icon class="suggestion-icon">bar_chart</mat-icon>
+      <div class="suggestion-content">
+        <span class="suggestion-label">Complexity</span>
+        <span class="suggestion-value">{{ project.complexity }}</span>
+      </div>
+      <span class="ai-badge">AI Suggestion</span>
+    </div>
+
+    <div class="suggestion-card" *ngIf="project?.duration && project.duration !== 'Unknown'">
+      <mat-icon class="suggestion-icon">schedule</mat-icon>
+      <div class="suggestion-content">
+        <span class="suggestion-label">Duration</span>
+        <span class="suggestion-value">{{ project.duration }}</span>
+      </div>
+      <span class="ai-badge">AI Suggestion</span>
+    </div>
+  </div>
+</section>
+
+    <!-- 3️⃣ Progress -->
+    <section class="section-card progress-section">
+      <h3>Project Progress</h3>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progress"></div>
+      </div>
+      <div class="progress-text">{{ progress | number:'1.0-0' }}%</div>
+    </section>
+
+    <!-- 4️⃣ Performance Dashboard -->
+    <section class="section-card performance-dashboard">
+      <h3>Performance Analysis</h3>
+      <div class="performance-card">
+        <div class="radial-progress">
+          <svg viewBox="0 0 36 36" class="circular-chart">
+            <path class="circle-bg"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <path class="circle"
+                  [attr.stroke]="getPerformanceColor()"
+                  [attr.stroke-dasharray]="performanceIndex + ', 100'"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <text x="18" y="20.35" class="percentage">{{ performanceIndex | number:'1.0-0' }}%</text>
+          </svg>
+        </div>
+        <div class="performance-badge" [ngStyle]="{'background-color': getPerformanceColor()}">
+          {{ performanceLevel }}
+        </div>
+        <div class="performance-status">
+          <span *ngIf="performanceLevel==='HIGH'">🚀 Ahead of schedule</span>
+          <span *ngIf="performanceLevel==='MEDIUM'">⏳ On track</span>
+          <span *ngIf="performanceLevel==='LOW'">⚠ At risk</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5️⃣ Phases toggle -->
+    <div class="phases-toggle">
+  <button mat-stroked-button (click)="showPhases = !showPhases">
+    <mat-icon>{{ showPhases ? 'expand_less' : 'expand_more' }}</mat-icon>
+    {{ showPhases ? 'Hide Phases' : 'Show Phases' }}
+  </button>
+</div>
+<div *ngIf="showPhases && projectId !== null" class="project-phases">
+  <app-project-phases [projectId]="projectId"></app-project-phases>
+</div>
+
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading">Loading project details...</div>

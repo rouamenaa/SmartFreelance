@@ -1,0 +1,117 @@
+<div class="projects-wrapper">
+
+  <!-- HEADER -->
+  <div class="projects-header">
+    <h2>Projects</h2>
+    <button mat-raised-button color="primary" routerLink="/create">
+      <mat-icon>add</mat-icon>
+      Create Project
+    </button>
+  </div>
+<div class="filters">
+
+  <!-- 🔎 Recherche -->
+  <input type="text"
+         placeholder="Search by title..."
+         [(ngModel)]="searchTerm"
+         (input)="applyFilters()">
+
+  <!-- 📌 Status -->
+  <select [(ngModel)]="selectedStatus"
+          (change)="applyFilters()">
+    <option value="">All Status</option>
+    <option value="DRAFT">Draft</option>
+    <option value="APPROVED">Approved</option>
+    <option value="IN_PROGRESS">In Progress</option>
+  </select>
+
+  <!-- 💰 Budget -->
+  <input type="number"
+         placeholder="Min Budget"
+         [(ngModel)]="minBudget"
+         (input)="applyFilters()">
+
+</div>
+  <!-- GRID -->
+  <div class="projects-grid" *ngIf="projects.length > 0; else noProjects">
+
+<mat-card class="project-card" *ngFor="let project of filteredProjects">
+      <!-- TOP -->
+      <div class="card-top">
+        <h3>{{ project.title }}</h3>
+        <span class="status-badge"
+              [ngClass]="project.status.toLowerCase()">
+          {{ project.status }}
+        </span>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="card-content">
+
+        <div class="info-row">
+          <mat-icon>attach_money</mat-icon>
+          <span>{{ project.budget | currency }}</span>
+        </div>
+
+        <div class="info-row">
+          <mat-icon>event</mat-icon>
+          <span>{{ project.deadline | date:'mediumDate' }}</span>
+        </div>
+
+      </div>
+
+      
+
+      <!-- ACTIONS -->
+ <div class="card-actions">
+
+  <!-- Edit -->
+  <button mat-icon-button
+          [routerLink]="['/edit', project.id]"
+          matTooltip="Edit">
+    <mat-icon>edit</mat-icon>
+  </button>
+
+  <!-- Approve -->
+  <button mat-icon-button
+          (click)="approve(project.id)"
+          matTooltip="Approve">
+    <mat-icon>check_circle</mat-icon>
+  </button>
+
+  <!-- Start -->
+  <button mat-icon-button
+          (click)="start(project.id)"
+          matTooltip="Start">
+    <mat-icon>play_arrow</mat-icon>
+  </button>
+
+  <!-- Delete -->
+  <button mat-icon-button
+          (click)="delete(project.id)"
+          matTooltip="Delete">
+    <mat-icon>delete</mat-icon>
+  </button>
+
+  <!-- View -->
+  <button mat-stroked-button
+          [routerLink]="['/projects', project.id]"
+          matTooltip="View">
+    <mat-icon>visibility</mat-icon>
+    View
+  </button>
+
+</div>
+    </mat-card>
+
+  </div>
+</div>
+
+<ng-template #noProjects>
+  <div class="no-projects">
+    <p>No projects found.</p>
+    <button mat-raised-button color="primary" routerLink="/create">
+      Create Project
+    </button>
+  </div>
+</ng-template>

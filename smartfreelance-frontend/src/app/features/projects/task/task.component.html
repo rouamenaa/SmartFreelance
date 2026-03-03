@@ -1,0 +1,88 @@
+<div class="task-container">
+
+  <h4>Tasks</h4>
+
+  <!-- FILTRES -->
+  <div class="task-filters">
+    <input type="text"
+           placeholder="Search task..."
+           [(ngModel)]="searchTerm"
+           (input)="applyFilters()">
+
+    <select [(ngModel)]="selectedStatus"
+            (change)="applyFilters()">
+      <option value="">All Status</option>
+      <option value="TODO">TODO</option>
+      <option value="IN_PROGRESS">IN_PROGRESS</option>
+      <option value="DONE">DONE</option>
+    </select>
+
+    <select [(ngModel)]="selectedPriority"
+            (change)="applyFilters()">
+      <option value="">All Priority</option>
+      <option value="LOW">Low</option>
+      <option value="MEDIUM">Medium</option>
+      <option value="HIGH">High</option>
+    </select>
+  </div>
+
+  <!-- FORMULAIRE AJOUT -->
+  <div class="task-form">
+    <input type="text" placeholder="Title" [(ngModel)]="newTask.title">
+    <textarea placeholder="Description" [(ngModel)]="newTask.description"></textarea>
+    <select [(ngModel)]="newTask.priority">
+      <option value="LOW">Low</option>
+      <option value="MEDIUM">Medium</option>
+      <option value="HIGH">High</option>
+    </select>
+    <button (click)="addTask()">Add Task</button>
+  </div>
+
+  <!-- LISTE DES TÂCHES FILTRÉES -->
+  <div *ngFor="let task of filteredTasks" class="task-card">
+
+    <!-- MODE ÉDITION -->
+    <div *ngIf="editingTask?.id === task.id; else viewMode">
+      <input [(ngModel)]="editingTask!.title" placeholder="Title">
+      <textarea [(ngModel)]="editingTask!.description" placeholder="Description"></textarea>
+      <select [(ngModel)]="editingTask!.priority">
+        <option value="LOW">Low</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="HIGH">High</option>
+      </select>
+      <select [(ngModel)]="editingTask!.status">
+        <option value="TODO">TODO</option>
+        <option value="IN_PROGRESS">IN_PROGRESS</option>
+        <option value="DONE">DONE</option>
+      </select>
+      <button (click)="saveEdit()">Save</button>
+      <button (click)="cancelEdit()">Cancel</button>
+    </div>
+
+    <!-- MODE LECTURE -->
+    <ng-template #viewMode>
+      <div class="task-header">
+        <strong>{{ task.title }}</strong>
+        <button (click)="deleteTask(task.id)">X</button>
+        <button (click)="startEdit(task)">Edit</button>
+      </div>
+
+      <p>{{ task.description }}</p>
+
+      <div class="task-footer">
+        <label>Status:</label>
+        <select [ngModel]="task.status" (ngModelChange)="updateStatus(task, $event)">
+          <option value="TODO">TODO</option>
+          <option value="IN_PROGRESS">IN_PROGRESS</option>
+          <option value="DONE">DONE</option>
+        </select>
+
+        <span class="priority {{ task.priority.toLowerCase() }}">
+          {{ task.priority }}
+        </span>
+      </div>
+    </ng-template>
+
+  </div>
+
+</div>

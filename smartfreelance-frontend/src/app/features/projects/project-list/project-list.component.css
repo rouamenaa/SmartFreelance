@@ -1,0 +1,195 @@
+/* ===== GLOBAL BACKGROUND ===== */
+body {
+  min-height: 100vh;
+  background: #0f172a;   /* navy profond */
+  color: #1e293b;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ===== WRAPPER ===== */
+.projects-wrapper {
+  padding: 60px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* ===== BOUTON CREATE PROJECT ===== */
+.projects-header button,
+.no-projects button {
+  background-color: #2563eb !important;  /* bleu professionnel */
+  color: #ffffff !important;             /* texte blanc */
+}
+
+.projects-header button:hover,
+.no-projects button:hover {
+  background-color: #1e40af !important;  /* bleu foncé au hover */
+}
+.filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filters input,
+.filters select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+/* ===== BOUTON VIEW SUR LES CARTES ===== */
+.card-actions button[matTooltip="View"] {
+  border-color: #2563eb !important;  /* bleu bordure */
+  color: #2563eb !important;         /* texte bleu */
+}
+
+.card-actions button[matTooltip="View"]:hover {
+  background-color: #2563eb !important;
+  color: #ffffff !important;         /* texte devient blanc au hover */
+}
+/* ===== HEADER ===== */
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 60px;
+}
+
+.projects-header h2 {
+  font-size: 36px;      
+  font-weight: 700;
+  color: #323d47;       
+  letter-spacing: 0.5px;
+}
+
+/* ===== GRID ===== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 35px;
+}
+
+/* ===== CARD ===== */
+.project-card {
+  background: #f8fafc;     
+  padding: 34px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.25s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== CARD TOP ===== */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-top h3 {
+  font-size: 22px;        
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ===== CONTENT ===== */
+.card-content {
+  margin: 28px 0;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: #475569;
+  font-size: 15px;
+}
+
+.info-row mat-icon {
+  color: #2563eb;   
+  font-size: 20px;
+}
+
+/* ===== ACTIONS ===== */
+.card-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== STATUS COLORS ===== */
+.draft {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.approved,
+.in_progress,
+.completed,
+.delivered {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ===== EMPTY STATE ===== */
+.no-projects {
+  text-align: center;
+  margin-top: 140px;
+  color: #cbd5e1;
+  font-size: 16px;
+}
+
+/* ===== ACTION ICON COLORS ===== */
+.card-actions button mat-icon {
+  font-size: 20px;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Edit */
+.card-actions button[matTooltip="Edit"] mat-icon {
+  color: #5b21b6; /* violet professionnel */
+}
+
+/* Approve */
+.card-actions button[matTooltip="Approve"] mat-icon {
+  color: #2563eb; /* bleu */
+}
+
+/* Start */
+.card-actions button[matTooltip="Start"] mat-icon {
+  color: #2360c3; /* bleu clair */
+}
+
+/* Delete */
+.card-actions button[matTooltip="Delete"] mat-icon {
+  color: #ab64ab; /* rouge doux */
+}
+
+/* View / Details */
+.card-actions button[matTooltip="View"] mat-icon {
+  color: #1e3a8a; /* bleu foncé */
+}
+
+/* Hover effet léger pour icônes */
+.card-actions button:hover mat-icon {
+  transform: scale(1.1);
+}
