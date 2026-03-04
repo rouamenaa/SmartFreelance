@@ -7,6 +7,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app-routing.module';
 
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),

@@ -1,39 +1,38 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ProjectsModule } from './features/projects/projects.module';
-import { HttpClientModule } from '@angular/common/http';
 import { LayoutComponent } from './core/layout/layout.component';
 import { NavbarComponent } from './core/navbar/navbar.component';
-import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SidebarComponent } from './core/sidebar/sidebar.component';
-
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
+import { LoginComponent } from './auth/login/login.component';
+import { UtilisateurComponent } from './utilisateur/utilisateur.component';
+import { UnauthorizedComponent } from './auth/unauthorized/unauthorized.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [], // 
   imports: [
-    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    
     AppComponent,
     LayoutComponent,
     NavbarComponent,
-    ConfirmDialogComponent,
     SidebarComponent,
-    ProjectsModule,
-    FormsModule,
-    ReactiveFormsModule,
+    ConfirmDialogComponent,
+    LoginComponent,
+    UtilisateurComponent,
+    UnauthorizedComponent
   ],
-  providers: [
-    provideClientHydration(),
-    provideAnimationsAsync()
-  ],
-  bootstrap: [],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-
+  providers: [],
+  bootstrap: []
 })
 export class AppModule { }

@@ -1,5 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { UnauthorizedComponent } from './auth/unauthorized/unauthorized.component';
+import { UtilisateurComponent } from './utilisateur/utilisateur.component';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { authGuard } from './core/guards/auth.guard';
+import { LoginComponent } from './auth/login/login.component';
+
+
 
 export const routes: Routes = [
   {
@@ -39,7 +46,19 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/skill/skill')
         .then(m => m.SkillComponent)
-  }
+  },
+  
+  { path: 'login', component: LoginComponent },
+
+  { path: 'utilisateur', component: UtilisateurComponent },
+
+  { path: 'admin', component: DashboardComponent, canActivate: [authGuard] },
+
+  { path: 'unauthorized', component: UnauthorizedComponent },
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' }, 
+
+  { path: '**', redirectTo: 'login' } 
 ];
 
 @NgModule({
