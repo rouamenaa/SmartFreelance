@@ -11,21 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-<<<<<<< HEAD
-=======
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-<<<<<<< HEAD
 import java.util.UUID;
-=======
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
 
 @RestController
 @RequestMapping("/auth")
@@ -35,68 +27,50 @@ public class AuthController {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userService;
-<<<<<<< HEAD
-    private final EmailService emailService; // ✅ Ajouté
-=======
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
+    private final EmailService emailService;
 
     @Autowired
     public AuthController(PasswordEncoder passwordEncoder,
                           UserRepository userRepository,
                           AuthenticationManager authenticationManager,
-<<<<<<< HEAD
                           CustomUserDetailsService userService,
-                          EmailService emailService) { // ✅ Ajouté
-=======
-                          CustomUserDetailsService userService) {
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
+                          EmailService emailService) {
 
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-<<<<<<< HEAD
-        this.emailService = emailService; // ✅ Ajouté
+        this.emailService = emailService;
     }
 
-=======
-    }
-
-
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
+    // ================= GET ALL =================
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
-<<<<<<< HEAD
 
     // ================= REGISTER =================
-=======
-    // ================= REGISTER =================
-
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
         if (user.getRole() == Role.ADMIN) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("message", "You cannot register as ADMIN"));
         }
-<<<<<<< HEAD
 
-        // ✅ Vérifier si l'email existe déjà
+        // Vérifier si l'email existe déjà
         if (userRepository.findByEmail(user.getEmail()) != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("message", "Email already exists"));
         }
 
-        // ✅ Générer le token de confirmation
+        // Générer le token de confirmation
         String token = UUID.randomUUID().toString();
         user.setConfirmationToken(token);
-        user.setEnabled(false); // compte désactivé jusqu'à confirmation
+        user.setEnabled(false);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
-        // ✅ Envoyer l'email de confirmation
+        // Envoyer l'email de confirmation
         emailService.sendConfirmationEmail(user.getEmail(), token);
 
         return ResponseEntity.ok(Map.of("message",
@@ -119,29 +93,18 @@ public class AuthController {
 
         return ResponseEntity.ok(Map.of("message",
                 "Email confirmed successfully! You can now log in."));
-=======
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
     }
 
     // ================= LOGIN =================
     @PostMapping("/login")
     public ResponseEntity<UserDTO> authenticate(@RequestBody User user) {
-<<<<<<< HEAD
-=======
-
-
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
         User existingUser = userRepository.findByEmail(user.getEmail());
 
         if (existingUser == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
-<<<<<<< HEAD
-        // ✅ Bloquer si compte non confirmé
+        // Bloquer si compte non confirmé
         if (!existingUser.isEnabled()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
@@ -150,12 +113,6 @@ public class AuthController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             existingUser.getUsername(),
-=======
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            existingUser.getUsername(), // ✅ utilise le username trouvé
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
                             user.getPassword()
                     )
             );
@@ -174,10 +131,8 @@ public class AuthController {
 
         return ResponseEntity.ok(dto);
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
+    // ================= ADD (admin only) =================
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         return ResponseEntity.ok(userRepository.save(user));
@@ -186,22 +141,10 @@ public class AuthController {
     // ================= GET USER BY ID =================
     @GetMapping("/user/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-<<<<<<< HEAD
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         User user = userOpt.get();
-=======
-
-        Optional<User> userOpt = userRepository.findById(id);
-
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        User user = userOpt.get();
-
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
@@ -215,7 +158,6 @@ public class AuthController {
     @PutMapping("/user/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id,
                                               @RequestBody User updatedUser) {
-<<<<<<< HEAD
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
 
@@ -227,28 +169,6 @@ public class AuthController {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
         if (updatedUser.getRole() != null && updatedUser.getRole() != Role.ADMIN) {
-=======
-
-        Optional<User> userOpt = userRepository.findById(id);
-
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        User existingUser = userOpt.get();
-
-        existingUser.setUsername(updatedUser.getUsername());
-        existingUser.setEmail(updatedUser.getEmail());
-
-        if (updatedUser.getPassword() != null &&
-                !updatedUser.getPassword().isEmpty()) {
-            existingUser.setPassword(
-                    passwordEncoder.encode(updatedUser.getPassword()));
-        }
-
-        if (updatedUser.getRole() != null &&
-                updatedUser.getRole() != Role.ADMIN) {
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
             existingUser.setRole(updatedUser.getRole());
         }
 
@@ -266,15 +186,7 @@ public class AuthController {
     // ================= DELETE USER =================
     @DeleteMapping("/user/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-<<<<<<< HEAD
         if (!userRepository.existsById(id)) return ResponseEntity.notFound().build();
-=======
-
-        if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
         userRepository.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
@@ -284,8 +196,4 @@ public class AuthController {
     public String test() {
         return "Backend working successfully 🚀";
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a084d154fb5e9c0f17cf6e3e48ec9b63dbf3dd50
