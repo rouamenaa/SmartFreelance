@@ -344,14 +344,7 @@ Criteria:
           pdfjsLib.GlobalWorkerOptions.workerSrc =
             'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-// <<<<<<< HEAD
-//           const pdf = await pdfjsLib.getDocument({
-//             data: typedArray,
-//             standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/'
-//           }).promise;
 
-//           let fullText = '';
-// =======
           const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
           let fullText = '';
 

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Condidature, CondidatureDetailStats } from '../../../models/Condidature';
 import { CondidatureService } from '../../../services/condidature.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-condidature-details-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: './condidature-details-page.component.html',
   styleUrl: './condidature-details-page.component.css',
 })

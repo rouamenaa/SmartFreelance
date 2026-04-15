@@ -160,9 +160,6 @@ body {
 }
 
 ::ng-deep .mat-mdc-form-field-outline {
-/* <<<<<<< HEAD
-  border-color: #090909 !important;
-======= */
   border-color: #e2e8f0 !important;
 }
 
@@ -171,9 +168,6 @@ body {
 }
 
 ::ng-deep .mat-mdc-form-field-label {
-/* <<<<<<< HEAD
-  color: #010101 !important;
-======= */
   color: #64748b !important;
 }
 
@@ -186,13 +180,6 @@ body {
 }
 
 ::ng-deep .mat-mdc-select-arrow {
-/* <<<<<<< HEAD
-  color: #080808 !important;
-}
-
-::ng-deep .mat-mdc-icon-button {
-  color: #000000 !important;
-======= */
   color: #64748b !important;
 }
 
