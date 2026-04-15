@@ -13,7 +13,12 @@ import { CondidatureEditPageComponent } from './condidature-edit-page/condidatur
 import { RouterModule } from '@angular/router';
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    RouterModule,
+    CondidatureRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
     CondidatureComponent,
     CondidatureTableComponent,
     CondidatureAddComponent,
@@ -22,13 +27,6 @@ import { RouterModule } from '@angular/router';
     CondidatureEditPageComponent,
     CondidatureEditComponent,
     CondidatureDeleteComponent,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    CondidatureRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
   ],
 })
 export class CondidatureModule {}

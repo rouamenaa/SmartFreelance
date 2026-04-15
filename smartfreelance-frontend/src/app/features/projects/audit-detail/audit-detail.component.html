@@ -540,7 +540,7 @@
       <div class="risk-left">
         <div class="risk-title">🎯 Failure Risk</div>
         <div class="risk-value" [style.color]="getRiskColor()">
-          {{ analysis.riskProbability?.toFixed(0) }}%
+          {{ analysis.riskProbability.toFixed(0) }}%
         </div>
         <div class="risk-label" [style.color]="getRiskColor()">
           {{ analysis.riskProbability >= 70 ? 'HIGH RISK' :
@@ -615,7 +615,7 @@
     <div class="plan-timeline">
       <div class="timeline-item"
            *ngFor="let task of actionPlan; let i = index"
-           [ngClass]="task.status?.toLowerCase()">
+           [ngClass]="task.status.toLowerCase()">
 
         <div class="timeline-connector" *ngIf="i < actionPlan.length - 1"></div>
 
@@ -630,7 +630,7 @@
                   [style.color]="getPriorityColor(task.priority || 'LOW')">
               ● {{ task.priority }}
             </span>
-            <span class="tc-status-chip" [ngClass]="task.status?.toLowerCase()">
+            <span class="tc-status-chip" [ngClass]="task.status.toLowerCase()">
               {{ task.status }}
             </span>
           </div>

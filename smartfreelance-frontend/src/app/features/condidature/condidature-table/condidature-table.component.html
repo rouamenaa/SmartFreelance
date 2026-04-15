@@ -18,11 +18,8 @@
         </select>
       </div>
 
-      <a *ngIf="canAddCandidature()" routerLink="/condidatures/add" class="btn-add-condidature">
-
       <a routerLink="/condidatures/statistics" class="btn-add-condidature btn-add-condidature--secondary">Statistics</a>
-      <a routerLink="/condidatures/add" class="btn-add-condidature">
-
+      <a *ngIf="canAddCandidature()" routerLink="/condidatures/add" class="btn-add-condidature">
         <span class="btn-add-condidature__icon" aria-hidden="true">+</span>
         Add application
       </a>
@@ -75,24 +72,6 @@
           </footer>
         </article>
       </div>
-
-      <footer class="card-actions">
-        <a [routerLink]="['/condidatures', c.id]" class="card-btn card-btn-details">Voir détails</a>
-        <a *ngIf="c.status === 'ACCEPTED'" [routerLink]="['/projects', c.projectId]" class="card-btn card-btn-success">
-          Voir projet
-        </a>
-        <ng-container *ngIf="canManageCandidatures() && isPending(c)">
-          <button type="button" class="card-btn card-btn-success" (click)="accept(c)" [disabled]="actionLoading === c.id">
-            {{ actionLoading === c.id ? '...' : 'Accepter' }}
-          </button>
-          <button type="button" class="card-btn card-btn-danger-outline" (click)="reject(c)" [disabled]="actionLoading === c.id">Refuser</button>
-        </ng-container>
-        <a *ngIf="!canManageCandidatures()" [routerLink]="['/condidatures', c.id, 'edit']" class="card-btn card-btn-primary-outline">Modifier</a>
-        <button *ngIf="!canManageCandidatures()" type="button" class="card-btn card-btn-danger-outline" (click)="openDelete(c)">Supprimer</button>
-      </footer>
-    </article>
-  </div>
-  <p *ngIf="!loading && list.length === 0" class="text-muted">Aucune candidature.</p>
 
     </section>
   </ng-container>

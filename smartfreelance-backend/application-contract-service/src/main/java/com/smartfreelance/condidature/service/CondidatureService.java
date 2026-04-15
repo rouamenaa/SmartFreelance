@@ -162,14 +162,15 @@ public class CondidatureService {
             existing.setFreelancerRating(dto.getFreelancerRating());
             existing.setStatus(dto.getStatus() != null ? dto.getStatus() : CondidatureStatus.PENDING);
             return toDTO(condidatureRepository.save(existing));
+        }
 
         if (condidatureRepository.existsByFreelancerIdAndStatus(dto.getFreelancerId(), CondidatureStatus.ACCEPTED)) {
             throw new IllegalArgumentException("You are already accepted in a project. You cannot apply to other projects.");
         }
         if (condidatureRepository.existsByProjectIdAndFreelancerId(dto.getProjectId(), dto.getFreelancerId())) {
             throw new IllegalArgumentException("A condidature already exists for this project and freelancer.");
-
         }
+
         Condidature entity = toEntity(dto);
         if (dto.getStatus() == null) {
             entity.setStatus(CondidatureStatus.PENDING);
@@ -240,9 +241,8 @@ public class CondidatureService {
 
         List<Condidature> others = condidatureRepository.findByProjectId(projectId).stream()
                 .filter(c -> !c.getId().equals(id) && c.getStatus() == CondidatureStatus.PENDING)
-
                 .collect(Collectors.toList());
-        for (Condidature c : othersSameProject) {
+        for (Condidature c : others) {
             c.setStatus(CondidatureStatus.REJECTED);
             condidatureRepository.save(c);
         }

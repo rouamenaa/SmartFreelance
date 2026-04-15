@@ -13,7 +13,7 @@ public interface ContratRepository extends JpaRepository<Contrat, Long> {
 
     List<Contrat> findByClientId(Long clientId);
     List<Contrat> findByFreelancerId(Long freelancerId);
-    List<Contrat> findByClientIdAndFreelancerId(Long clientId, Long freelancerId);
+    //List<Contrat> findByClientIdAndFreelancerId(Long clientId, Long freelancerId);
     List<Contrat> findByStatut(Contrat.StatutContrat statut);
 
     List<Contrat> findByClientIdAndFreelancerId(Long clientId, Long freelancerId);
