@@ -2,12 +2,19 @@ package com.esprit.microservice.pi.controlleurs;
 
 import com.esprit.microservice.pi.DTO.ProfileAnalyticsDTO;
 import com.esprit.microservice.pi.DTO.ProfileCompletionDTO;
+import com.esprit.microservice.pi.DTO.ProfileViewNotificationDTO;
+import com.esprit.microservice.pi.DTO.RecordProfileViewRequestDTO;
 import com.esprit.microservice.pi.DTO.SkillRecommendationDTO;
 import com.esprit.microservice.pi.entites.FreelancerProfile;
 import com.esprit.microservice.pi.entites.PortfolioProject;
 import com.esprit.microservice.pi.entites.Skill;
+import com.esprit.microservice.pi.services.CvPdfService;
 import com.esprit.microservice.pi.services.FreelancerService;
+import com.esprit.microservice.pi.services.ProfileViewNotificationService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,9 +24,15 @@ import java.util.List;
 public class FreelancerController {
 
     private final FreelancerService service;
+    private final CvPdfService cvPdfService;
+    private final ProfileViewNotificationService profileViewNotificationService;
 
-    public FreelancerController(FreelancerService service) {
+    public FreelancerController(FreelancerService service,
+                                CvPdfService cvPdfService,
+                                ProfileViewNotificationService profileViewNotificationService) {
         this.service = service;
+        this.cvPdfService = cvPdfService;
+        this.profileViewNotificationService = profileViewNotificationService;
     }
 
     // ─────────────────────────────────────────────
@@ -144,5 +157,39 @@ public class FreelancerController {
     @GetMapping("/{userId}/skill-recommendation")
     public SkillRecommendationDTO getSkillRecommendation(@PathVariable Long userId) {
         return service.getSkillRecommendation(userId);
+    }
+
+    @GetMapping("/{userId}/cv")
+    public ResponseEntity<byte[]> downloadCv(@PathVariable Long userId) {
+        byte[] pdfBytes = cvPdfService.generateCvPdf(userId);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=freelancer-cv-" + userId + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
+
+    // ─────────────────────────────────────────────
+    // Profile view notifications (LinkedIn-style)
+    // ─────────────────────────────────────────────
+
+    /**
+     * Call when a user opens someone else's freelancer profile.
+     * No notification is created when the viewer is the profile owner.
+     */
+    @PostMapping("/{profileOwnerId}/views")
+    public ResponseEntity<ProfileViewNotificationDTO> recordProfileView(
+            @PathVariable Long profileOwnerId,
+            @Valid @RequestBody RecordProfileViewRequestDTO body) {
+        return profileViewNotificationService.recordProfileView(profileOwnerId, body.getViewerUserId())
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    /**
+     * Notifications for the profile owner (recent profile views).
+     */
+    @GetMapping("/{userId}/view-notifications")
+    public List<ProfileViewNotificationDTO> getViewNotifications(@PathVariable Long userId) {
+        return profileViewNotificationService.listForProfileOwner(userId);
     }
 }

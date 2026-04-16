@@ -1,0 +1,35 @@
+<div class="chat-input-wrapper">
+  <!-- Suggestions Dropdown -->
+  <div class="suggestions-container" *ngIf="showSuggestions">
+    <div class="suggestions-header" *ngIf="isLoading">
+      <span class="spinner"></span> Génération de suggestions...
+    </div>
+    <ul class="suggestions-list">
+      <li *ngFor="let suggestion of suggestions" (mousedown)="selectSuggestion(suggestion)">
+        <i class="fa fa-magic"></i>
+        <span [innerHTML]="highlightMatch(suggestion)"></span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Input Bar -->
+  <div class="input-bar">
+    <input 
+      #inputField
+      type="text" 
+      [(ngModel)]="userInput" 
+      (input)="onInput()"
+      (keyup.enter)="sendMessage()"
+      (blur)="onBlur()"
+      (focus)="showSuggestions = suggestions.length > 0"
+      placeholder="Décrivez votre besoin (ex: Angular expert)..."
+      autocomplete="off"
+    >
+    <div class="actions">
+      <span class="char-count" *ngIf="userInput.length > 0">{{ userInput.length }}</span>
+      <button class="send-btn" (click)="sendMessage()" [disabled]="!userInput.trim()">
+        <i class="fa fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>

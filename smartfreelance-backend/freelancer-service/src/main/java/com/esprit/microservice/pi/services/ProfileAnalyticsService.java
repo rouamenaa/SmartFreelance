@@ -32,14 +32,13 @@ public class ProfileAnalyticsService {
         // Tarif horaire sécurisé
         java.math.BigDecimal hourlyRate = profile.getHourlyRate();
 
-        // Expérience convertie en années
-        int experienceYears = mapExperienceToYears(profile.getExperienceLevel());
 
         return new ProfileAnalyticsDTO(
                 totalSkills,
                 totalProjects,
                 hourlyRate,
-                experienceYears
+                mapExperienceToYears(profile.getExperienceLevel())
+
         );
     }
 

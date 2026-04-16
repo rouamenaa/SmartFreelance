@@ -1,0 +1,120 @@
+<div class="container py-5">
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden animate__animated animate__zoomIn">
+    <div class="card-header bg-primary text-white p-4 border-0 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);">
+      <div class="d-flex align-items-center">
+        <div class="bg-white rounded-circle p-2 me-3 shadow-sm">
+          <i class="fas fa-robot text-primary fa-lg"></i>
+        </div>
+        <div>
+          <h4 class="fw-bold mb-0">IA : Recommandation de Skills</h4>
+          <small class="opacity-75">Analyse prédictive basée sur le marché actuel</small>
+        </div>
+      </div>
+      <button class="btn btn-light rounded-pill px-4 shadow-sm fw-bold transition-all hover-scale" (click)="generateRecommendation()" [disabled]="loading">
+        <span *ngIf="!loading"><i class="fas fa-play me-2"></i>Lancer l'analyse</span>
+        <span *ngIf="loading"><i class="fas fa-spinner fa-spin me-2"></i>Calcul en cours...</span>
+      </button>
+    </div>
+
+    <div class="card-body p-4 bg-light-subtle">
+      <div *ngIf="error" class="alert alert-danger border-0 shadow-sm rounded-4 animate__animated animate__shakeX">
+        <i class="fas fa-exclamation-triangle me-2"></i> {{ error }}
+      </div>
+      
+      <div *ngIf="recommendation" class="recommendation-result animate__animated animate__fadeIn">
+        <div class="alert bg-white border-0 shadow-sm p-4 rounded-4 mb-5 position-relative border-start border-primary border-5">
+          <h6 class="text-primary fw-bold mb-3"><i class="fas fa-comment-dots me-2"></i>Synthèse de l'Intelligence Artificielle</h6>
+          <p class="mb-0 fs-4 fw-light text-dark italic">"{{ recommendation.summary }}"</p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-12 mb-2">
+            <div class="d-flex justify-content-between align-items-end mb-2">
+              <h6 class="fw-bold text-secondary mb-0">Compatibilité actuelle avec le marché</h6>
+              <span class="badge bg-primary fs-5 px-3 rounded-pill">{{ recommendation.compatibilityGlobal }}%</span>
+            </div>
+            <div class="progress rounded-pill shadow-inner" style="height: 15px; background-color: #e9ecef;">
+              <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" 
+                   [style.width.%]="recommendation.compatibilityGlobal"></div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-5">
+            <h5 class="fw-bold text-dark mb-4">Opportunités identifiées</h5>
+            <div class="row g-4">
+              <div *ngFor="let rec of recommendation.recommendations" class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 transition-all hover-elevate">
+                  <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                      <div class="bg-primary-subtle p-3 rounded-4">
+                        <i class="fas fa-chart-line text-primary fa-2x"></i>
+                      </div>
+                      <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-bold">+{{ rec.opportunityBoostPercent }}% Potentiel</span>
+                    </div>
+                    
+                    <h3 class="fw-bold text-dark mb-1">{{ rec.skill }}</h3>
+                    <p class="text-muted small mb-4">Score d'opportunité : {{ rec.opportunityScore | number:'1.0-0' }}</p>
+
+                    <div class="vstack gap-2 mb-4">
+                      <div class="d-flex justify-content-between small">
+                        <span class="text-muted"><i class="fas fa-briefcase me-2"></i>Demande</span>
+                        <span class="fw-bold text-dark">{{ rec.demandCount }} projets</span>
+                      </div>
+                      <div class="d-flex justify-content-between small">
+                        <span class="text-muted"><i class="fas fa-users me-2"></i>Offre</span>
+                        <span class="fw-bold text-dark">{{ rec.freelancerCount }} freelancers</span>
+                      </div>
+                      <div class="d-flex justify-content-between small">
+                        <span class="text-muted"><i class="fas fa-money-bill-wave me-2"></i>Budget moyen</span>
+                        <span class="fw-bold text-success">{{ rec.avgBudget | currency:'EUR' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="mt-auto pt-3 border-top">
+                      <div class="d-flex justify-content-between align-items-center mb-1 small">
+                        <span class="fw-bold text-secondary">Compatibilité après apprentissage</span>
+                        <span class="fw-bold text-primary">{{ rec.compatibilityPercent }}%</span>
+                      </div>
+                      <div class="progress rounded-pill" style="height: 8px;">
+                        <div class="progress-bar bg-info" role="progressbar" [style.width.%]="rec.compatibilityPercent"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!recommendation && !loading" class="text-center py-5">
+        <div class="mb-4">
+          <div class="bg-primary-subtle d-inline-block p-4 rounded-circle shadow-sm animate__animated animate__pulse animate__infinite">
+            <i class="fas fa-brain fa-4x text-primary"></i>
+          </div>
+        </div>
+        <h3 class="fw-bold text-dark mb-2">Prêt pour votre prochaine étape ?</h3>
+        <p class="text-muted px-md-5 mb-4">Notre IA analyse en temps réel les projets publiés et le nombre de freelancers disponibles pour vous suggérer les compétences les plus rentables à acquérir.</p>
+        <button class="btn btn-primary btn-lg rounded-pill px-5 shadow fw-bold" (click)="generateRecommendation()">
+          Démarrer l'analyse du marché
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.hover-elevate:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+.transition-all {
+  transition: all 0.3s ease-in-out;
+}
+.shadow-inner {
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+</style>

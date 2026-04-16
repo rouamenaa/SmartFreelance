@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { PortfolioProjectComponent } from './portfolio-project';
 
@@ -9,14 +11,14 @@ describe('PortfolioProjectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PortfolioProjectComponent],
-      providers: [provideHttpClient()]
+      imports: [PortfolioProjectComponent, NoopAnimationsModule],
+      providers: [provideHttpClient(), provideRouter([])]
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(PortfolioProjectComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

@@ -12,14 +12,19 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatError } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Router } from '@angular/router';
+import { MatListModule } from '@angular/material/list';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FreelancerProfile } from '../../models/freelancer-profile.model';
+import { AuthService } from '../../core/serviceslogin/auth.service';
 import {
   FreelancerService,
   ProfileAnalyticsDTO,
   ProfileCompletionDTO,
-  SkillRecommendationDTO
+  ProfileViewNotificationDTO,
+  SkillRecommendationDTO,
+  SkillRecommendationResponseDTO
 } from '../../services/freelancer-profile';
+import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
 
 @Component({
   standalone: true,
@@ -30,7 +35,8 @@ import {
     CommonModule, FormsModule, ReactiveFormsModule,
     MatCardModule, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatTooltipModule, MatError, MatProgressBarModule
+    MatTooltipModule, MatError, MatProgressBarModule, MatListModule,
+    NotificationBellComponent
   ]
 })
 export class FreelancerProfileComponent implements OnInit {
@@ -38,9 +44,13 @@ export class FreelancerProfileComponent implements OnInit {
   profileForm!: FormGroup;
   existingProfile: FreelancerProfile | null = null;
   isEditMode: boolean = false;
+  /** Freelancer profile being viewed (from route `profil-freelancer/:userId` or default 1). */
   currentUserId: number = 1;
   showForm: boolean = false;
   showProfileInfo: boolean = true;
+
+  viewNotifications: ProfileViewNotificationDTO[] = [];
+  loadingViewNotifications = false;
 
   successMessage: string = '';
   errorMessage: string = '';
@@ -49,18 +59,47 @@ export class FreelancerProfileComponent implements OnInit {
   analytics: ProfileAnalyticsDTO | null = null;
   completion: ProfileCompletionDTO | null = null;
   skillRecommendation: SkillRecommendationDTO | null = null;
+  marketRecommendation: SkillRecommendationResponseDTO | null = null;
   loadingAdvanced: boolean = false;
   showAdvanced: boolean = false;
+  loadingRecommendation: boolean = false;
+  downloadingCv: boolean = false;
 
   constructor(
     private freelancerService: FreelancerService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
     this.initializeForm();
-    this.loadProfile();
+    this.route.paramMap.subscribe((params) => {
+      const idParam = params.get('userId');
+      if (idParam != null) {
+        const parsed = parseInt(idParam, 10);
+        this.currentUserId = Number.isNaN(parsed) ? 1 : parsed;
+      } else {
+        this.currentUserId = 1;
+      }
+      this.loadProfile();
+    });
+  }
+
+  /** Dev-only: set `localStorage.debugFreelancerUserId` if JWT has no numeric id. */
+  private getViewerUserId(): number | null {
+    const fromJwt = this.authService.getUserId();
+    if (fromJwt != null) return fromJwt;
+    const dbg = typeof localStorage !== 'undefined' ? localStorage.getItem('debugFreelancerUserId') : null;
+    if (!dbg) return null;
+    const n = parseInt(dbg, 10);
+    return Number.isNaN(n) ? null : n;
+  }
+
+  isViewingOwnProfile(): boolean {
+    const v = this.getViewerUserId();
+    return v != null && v === this.currentUserId;
   }
 
   private initializeForm() {
@@ -85,6 +124,7 @@ export class FreelancerProfileComponent implements OnInit {
         this.showForm = false;
         // Auto-load advanced features once profile is loaded
         this.loadAdvancedFeatures();
+        this.afterProfileLoadedForViewTracking();
       },
       error: (err: any) => {
         if (err.status === 404) {
@@ -93,6 +133,34 @@ export class FreelancerProfileComponent implements OnInit {
         } else {
           this.errorMessage = 'Erreur lors du chargement du profil.';
         }
+      }
+    });
+  }
+
+  private afterProfileLoadedForViewTracking() {
+    const viewerId = this.getViewerUserId();
+    if (viewerId != null && viewerId !== this.currentUserId) {
+      this.freelancerService.recordProfileView(this.currentUserId, viewerId).subscribe({
+        next: () => {},
+        error: (e) => console.warn('Profile view notification skipped', e)
+      });
+    }
+    if (this.isViewingOwnProfile()) {
+      this.loadViewNotifications();
+    } else {
+      this.viewNotifications = [];
+    }
+  }
+
+  loadViewNotifications() {
+    this.loadingViewNotifications = true;
+    this.freelancerService.getViewNotifications(this.currentUserId).subscribe({
+      next: (list) => {
+        this.viewNotifications = list;
+        this.loadingViewNotifications = false;
+      },
+      error: () => {
+        this.loadingViewNotifications = false;
       }
     });
   }
@@ -110,16 +178,11 @@ export class FreelancerProfileComponent implements OnInit {
       completion: this.freelancerService.getCompletion(this.currentUserId).pipe(catchError(err => {
         console.error('❌ Completion Error', err);
         return of(null);
-      })),
-      recommendation: this.freelancerService.getSkillRecommendation(this.currentUserId).pipe(catchError(err => {
-        console.error('❌ Recommendation Error', err);
-        return of(null);
       }))
     }).subscribe({
       next: (results) => {
         this.analytics = results.analytics;
         this.completion = results.completion;
-        this.skillRecommendation = results.recommendation;
 
         this.loadingAdvanced = false;
         this.showAdvanced = true;
@@ -149,7 +212,7 @@ export class FreelancerProfileComponent implements OnInit {
   }
 
   getScoreClass(): string {
-    const s = this.skillRecommendation?.globalSkillScore ?? 0;
+    const s = this.marketRecommendation?.compatibilityGlobalPercent ?? 0;
     if (s >= 75) return 'score-high';
     if (s >= 40) return 'score-mid';
     return 'score-low';
@@ -162,6 +225,52 @@ export class FreelancerProfileComponent implements OnInit {
       case 'intermediate': return 'grade';
       default: return 'emoji_events';
     }
+  }
+
+  generateMarketRecommendation() {
+    if (!this.existingProfile) {
+      this.errorMessage = 'Veuillez d abord creer un profil.';
+      return;
+    }
+
+    this.loadingRecommendation = true;
+    this.errorMessage = '';
+
+    this.freelancerService.getMarketSkillRecommendation({
+      freelancerId: this.currentUserId,
+      maxResults: 3
+    }).subscribe({
+      next: (result) => {
+        this.marketRecommendation = result;
+        this.loadingRecommendation = false;
+      },
+      error: (err) => {
+        console.error('❌ Market Recommendation Error', err);
+        this.errorMessage = 'Erreur lors de la generation des recommandations IA.';
+        this.loadingRecommendation = false;
+      }
+    });
+  }
+
+  downloadCv() {
+    this.downloadingCv = true;
+    this.errorMessage = '';
+
+    this.freelancerService.downloadCv(this.currentUserId).subscribe({
+      next: (blob: Blob) => {
+        const fileURL = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = fileURL;
+        anchor.download = `freelancer-cv-${this.currentUserId}.pdf`;
+        anchor.click();
+        window.URL.revokeObjectURL(fileURL);
+        this.downloadingCv = false;
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors du telechargement du CV.';
+        this.downloadingCv = false;
+      }
+    });
   }
 
   // ─── EXISTING METHODS ────────────────────────────────────────

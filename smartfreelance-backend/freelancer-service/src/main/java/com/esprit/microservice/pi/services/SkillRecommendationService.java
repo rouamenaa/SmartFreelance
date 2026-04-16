@@ -60,9 +60,9 @@ public class SkillRecommendationService {
         if (level == null) return 0;
 
         return switch (level.toLowerCase()) {
-            case "junior" -> 1;
-            case "mid" -> 2;
-            case "senior" -> 3;
+            case "beginner" -> 1;
+            case "intermediate" -> 2;
+            case "advanced" -> 3;
             case "expert" -> 4;
             default -> 1;
         };

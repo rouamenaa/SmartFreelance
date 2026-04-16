@@ -1,0 +1,43 @@
+<div class="notification-wrapper">
+  <!-- Nav Icon / Bell Button -->
+  <button class="nav-icon-btn" (click)="toggleDropdown()" [class.active]="isOpen">
+    <!-- LinkedIn-like Solid Bell Icon via SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M22 19h-2v-4.5a7.51 7.51 0 00-4-6.6V7a4 4 0 00-8 0v.9a7.51 7.51 0 00-4 6.6V19H2v2h20v-2zm-12.5 4a2.5 2.5 0 005 0h-5z"/>
+    </svg>
+    <div *ngIf="unreadCount > 0" class="badge">{{ unreadCount }}</div>
+  </button>
+
+  <!-- Flyout Dropdown -->
+  <div class="dropdown-pane" *ngIf="isOpen">
+    <!-- Header -->
+    <div class="dropdown-header">
+      <h3>Notifications</h3>
+    </div>
+    
+    <!-- List Body -->
+    <div class="dropdown-body">
+      <div class="notification-item" *ngFor="let notif of notifications" [class.unread]="!notif.isRead">
+        <div class="avatar-container">
+          <div class="fallback-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+          </div>
+        </div>
+        
+        <div class="notification-content">
+          <p>
+            {{ notif.message }}
+          </p>
+          <span class="time">{{ notif.viewedAt | date:'medium' }}</span>
+        </div>
+        
+        <!-- Blue dot unread indicator -->
+        <div class="unread-indicator" *ngIf="!notif.isRead"></div>
+      </div>
+
+      <div class="empty-state" *ngIf="notifications.length === 0">
+        No new notifications.
+      </div>
+    </div>
+  </div>
+</div>

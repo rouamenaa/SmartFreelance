@@ -30,7 +30,7 @@ export class LoginComponent {
         } else if (role === 'CLIENT') {
           this.router.navigate(['/utilisateur']);
         } else if (role === 'FREELANCER') {
-          this.router.navigate(['/freelancer']);
+          this.router.navigate(['/home']);
         } else {
           this.router.navigate(['/home']);
         }

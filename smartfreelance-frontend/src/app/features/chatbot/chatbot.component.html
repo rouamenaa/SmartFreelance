@@ -1,0 +1,43 @@
+<div class="chat-container">
+    <div class="chat-header">
+      <h3>find ur freelancer</h3>
+    </div>
+  
+    <div class="chat-body" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+      <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="{'user-msg': msg.isUser, 'bot-msg': !msg.isUser}">
+        <div class="message-bubble">
+          {{ msg.text }}
+        </div>
+        
+        <div *ngIf="msg.recommendations && msg.recommendations.length > 0" class="recommendations">
+          <div *ngFor="let rec of msg.recommendations" class="freelancer-card">
+            <div class="card-header">
+              <span class="name">{{ rec.name }}</span>
+              <span class="rating">⭐ {{ rec.rating }}</span>
+            </div>
+            <div class="card-body">
+              <div class="skills">
+                <span *ngFor="let skill of rec.skills" class="skill-tag">{{ skill }}</span>
+              </div>
+              <div class="score">
+                Matching : <span class="score-val">{{ rec.matchingScore | number:'1.0-0' }}%</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-profile">Voir le profil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="isLoading" class="bot-msg">
+        <div class="message-bubble loading">
+          <span>.</span><span>.</span><span>.</span>
+        </div>
+      </div>
+    </div>
+  
+    <div class="chat-footer">
+      <app-chat-input (messageSent)="handleNewMessage($event)"></app-chat-input>
+    </div>
+  </div>

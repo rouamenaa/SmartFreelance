@@ -10,8 +10,7 @@ export const environment = {
 
 
 
-    apiUrl1: 'http://localhost:8080/api',
-
-
+  apiUrl1: 'http://localhost:8080/api',
+  searchApiUrl: 'http://localhost:8083/api/search',
 };
 

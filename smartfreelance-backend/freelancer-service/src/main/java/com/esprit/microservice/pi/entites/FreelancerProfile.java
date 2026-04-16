@@ -48,6 +48,8 @@ public class FreelancerProfile {
     @Size(min = 2, max = 60, message = "Le pays doit faire entre 2 et 60 caractères")
     private String country;
 
+    private Double rating; // Ajout du rating
+
     @OneToMany(mappedBy = "freelancer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Skill> skills;

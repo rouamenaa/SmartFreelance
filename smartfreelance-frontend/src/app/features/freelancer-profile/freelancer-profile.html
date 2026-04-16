@@ -4,12 +4,43 @@
   <div class="profile-header">
     <h2>Freelancer Profile</h2>
     <div class="header-actions">
+      <app-notification-bell 
+        [notifications]="viewNotifications">
+      </app-notification-bell>
       <button mat-raised-button color="primary" (click)="showUpdateForm()" matTooltip="Update Profile">
         <mat-icon>edit</mat-icon>
         Update Profile
       </button>
+      <button mat-raised-button color="accent" (click)="downloadCv()" [disabled]="downloadingCv" matTooltip="Download CV PDF">
+        <mat-icon>download</mat-icon>
+        {{ downloadingCv ? 'Downloading...' : 'Download CV' }}
+      </button>
     </div>
   </div>
+
+  <!-- Profile view notifications (owner only) -->
+  <section class="view-notifications-panel" *ngIf="isViewingOwnProfile() && existingProfile">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>visibility</mat-icon>
+        <mat-card-title>Who viewed your profile</mat-card-title>
+        <mat-card-subtitle>Recent visits from other freelancers</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="muted" *ngIf="loadingViewNotifications">Loading notifications…</p>
+        <ng-container *ngIf="!loadingViewNotifications && viewNotifications.length === 0">
+          <p class="muted">No profile views yet.</p>
+        </ng-container>
+        <mat-list *ngIf="!loadingViewNotifications && viewNotifications.length > 0">
+          <mat-list-item *ngFor="let n of viewNotifications">
+            <mat-icon matListItemIcon>person</mat-icon>
+            <span matListItemTitle>{{ n.message }}</span>
+            <span matListItemLine class="notification-meta">{{ n.viewedAt | date:'medium' }}</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </section>
 
   <!-- PROFILE INFO DISPLAY -->
   <div class="profile-info" *ngIf="showProfileInfo && existingProfile">
@@ -138,13 +169,7 @@
                 <span class="stat-label">/ hour</span>
               </div>
             </div>
-            <div class="stat-chip">
-              <mat-icon>calendar_today</mat-icon>
-              <div>
-                <span class="stat-number">{{ analytics.experienceInYears }}y</span>
-                <span class="stat-label">Experience</span>
-              </div>
-            </div>
+            
           </div>
         </div>
 
@@ -192,59 +217,69 @@
           </div>
         </div>
 
-        <!-- ── CARD 3 : Skill Recommendation ─────────────── -->
-        <div class="adv-card skills-card" *ngIf="skillRecommendation">
+        <!-- ── CARD 3 : AI Skill Market Recommendation ───── -->
+        <div class="adv-card skills-card">
           <div class="adv-card-header">
             <div class="adv-icon-wrap skills-icon">
               <mat-icon>lightbulb</mat-icon>
             </div>
             <div>
-              <h4>Skill Insights</h4>
-              <span class="adv-subtitle">Based on your skill set</span>
+              <h4>AI Skill Recommendation</h4>
+              <span class="adv-subtitle">Based on market demand vs freelancer supply</span>
             </div>
           </div>
 
-          <!-- Global score bar -->
-          <div class="score-section">
+          <button mat-raised-button color="primary" (click)="generateMarketRecommendation()" [disabled]="loadingRecommendation">
+            <mat-icon>auto_awesome</mat-icon>
+            {{ loadingRecommendation ? 'Generating...' : 'Generer recommandation' }}
+          </button>
+
+          <div class="score-section" *ngIf="marketRecommendation">
             <div class="score-label-row">
-              <span>Global Skill Score</span>
+              <span>Compatibility Score</span>
               <span class="score-value" [ngClass]="getScoreClass()">
-                {{ skillRecommendation.globalSkillScore }} / 100
+                {{ marketRecommendation.compatibilityGlobalPercent }}%
               </span>
             </div>
             <div class="score-bar-track">
-              <div class="score-bar-fill" [style.width.%]="skillRecommendation.globalSkillScore"
+              <div class="score-bar-fill" [style.width.%]="marketRecommendation.compatibilityGlobalPercent"
                 [ngClass]="getScoreClass()">
               </div>
             </div>
           </div>
 
-          <!-- Dominant skill -->
-          <div class="dominant-skill" *ngIf="skillRecommendation.dominantSkill !== 'N/A'">
+          <div class="dominant-skill" *ngIf="marketRecommendation">
             <mat-icon>military_tech</mat-icon>
             <div>
-              <span class="dominant-label">Dominant Skill</span>
-              <span class="dominant-name">{{ skillRecommendation.dominantSkill }}</span>
+              <span class="dominant-label">AI Message</span>
+              <span class="dominant-name">{{ marketRecommendation.summaryMessage }}</span>
             </div>
           </div>
 
-          <!-- Top skills -->
-          <div class="top-skills" *ngIf="skillRecommendation.topSkills.length > 0">
-            <p class="top-skills-label">Top Skills</p>
+          <div class="top-skills" *ngIf="marketRecommendation && marketRecommendation.recommendations.length > 0">
+            <p class="top-skills-label">Recommended Skills</p>
             <div class="top-skills-list">
-              <div class="top-skill-item" *ngFor="let skill of skillRecommendation.topSkills; let i = index">
+              <div class="top-skill-item recommendation-item"
+                *ngFor="let recommendation of marketRecommendation.recommendations; let i = index">
                 <span class="rank-badge rank-{{ i + 1 }}">{{ i + 1 }}</span>
-                <span>{{ skill }}</span>
+                <div class="recommendation-content">
+                  <strong>{{ recommendation.skill }}</strong>
+                  <small>{{ recommendation.aiMessage }}</small>
+                  <small>
+                    Opportunity: {{ recommendation.opportunityScore }} |
+                    Compatibilite: {{ recommendation.compatibilityPercent }}% |
+                    Budget moyen: ${{ recommendation.avgBudget }}
+                  </small>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Empty state -->
-          <div class="no-skills-msg" *ngIf="skillRecommendation.dominantSkill === 'N/A'">
+          <div class="no-skills-msg" *ngIf="marketRecommendation && marketRecommendation.recommendations.length === 0">
             <mat-icon>psychology</mat-icon>
-            <p>Add skills to get personalised insights</p>
+            <p>No new skill recommendation for now.</p>
             <button mat-stroked-button (click)="navigateToSkills()">
-              <mat-icon>add</mat-icon> Add Skills
+              <mat-icon>add</mat-icon> Manage Skills
             </button>
           </div>
         </div>

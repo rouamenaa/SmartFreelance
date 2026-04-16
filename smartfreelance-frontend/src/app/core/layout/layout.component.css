@@ -1,5 +1,10 @@
 .main-container {
-  
-  margin-left: 210px; 
+  margin-left: 240px; 
   padding: 20px; 
+  margin-top: 62px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.main-container.collapsed {
+  margin-left: 0;
 }
