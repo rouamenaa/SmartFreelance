@@ -30,3 +30,12 @@ jobs:
 
       - name: Run tests
         run: mvn -B clean test -Dspring.profiles.active=test
+
+      - name: Generate JaCoCo report
+        run: mvn jacoco:report
+
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: smartfreelance-backend/project-service/target/site/jacoco/
