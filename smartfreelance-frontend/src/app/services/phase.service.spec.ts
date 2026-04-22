@@ -11,6 +11,7 @@ describe('ProjectPhaseService', () => {
     TestBed.configureTestingModule({
       providers: [ProjectPhaseService, provideHttpClient(), provideHttpClientTesting()],
     });
+
     service = TestBed.inject(ProjectPhaseService);
   });
 

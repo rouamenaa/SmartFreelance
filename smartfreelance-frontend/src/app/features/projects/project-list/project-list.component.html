@@ -96,7 +96,8 @@
            mat-raised-button
            color="primary"
            [routerLink]="['/condidatures/add']"
-           [queryParams]="{ projectId: project.id }">
+           [queryParams]="{ projectId: project.id, projectName: project.title }">
+          <mat-icon>send</mat-icon>
           Candidater
         </a>
         <button *ngIf="isFreelancerView() && canViewProjectDetails(project)"
@@ -114,7 +115,8 @@
            mat-stroked-button
            color="accent"
            [routerLink]="['/condidatures/add']"
-           [queryParams]="{ projectId: project.id }">
+           [queryParams]="{ projectId: project.id, projectName: project.title }">
+          <mat-icon>send</mat-icon>
           Re-candidater
         </a>
       </div>
