@@ -5,6 +5,9 @@ on:
     branches: [ main ]
     paths:
       - 'smartfreelance-backend/project-service/**'
+  pull_request:
+    paths:
+      - 'smartfreelance-backend/project-service/**'
 
 jobs:
   test:
@@ -23,6 +26,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: maven
 
       - name: Run tests
-        run: mvn clean test
+        run: mvn -B clean test -Dspring.profiles.active=test
