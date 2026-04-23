@@ -18,6 +18,7 @@ public interface SkillClient {
     @GetMapping("/freelancer/{freelancerId}")
     List<SkillDTO> getSkillsByFreelancerId(@PathVariable("freelancerId") Long freelancerId);
 
+
     /**
      * Get skill details by ID
      */
