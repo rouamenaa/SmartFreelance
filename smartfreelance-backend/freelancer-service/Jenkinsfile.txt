@@ -23,7 +23,12 @@ pipeline {
         stage('Test') {
             steps {
                 dir('smartfreelance-backend/freelancer-service') {
-                    sh 'mvn test'
+                    sh '''
+                    mvn test \
+                    -Dspring.profiles.active=test \
+                    -Deureka.client.enabled=false \
+                    -Dspring.cloud.discovery.enabled=false
+                    '''
                 }
             }
         }
@@ -31,8 +36,13 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('smartfreelance-backend/freelancer-service') {
-                    withSonarQubeEnv('sonar') {
-                        sh 'mvn sonar:sonar'
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        sh '''
+                        mvn sonar:sonar \
+                        -Dspring.profiles.active=test \
+                        -Deureka.client.enabled=false \
+                        -Dspring.cloud.discovery.enabled=false
+                        '''
                     }
                 }
             }
@@ -40,6 +50,9 @@ pipeline {
     }
 
     post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
         failure {
             echo 'Pipeline failed!'
         }
